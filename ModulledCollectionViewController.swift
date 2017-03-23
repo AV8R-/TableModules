@@ -81,6 +81,10 @@ class ModulledCollectionViewController: UICollectionViewController {
     }
     
     //MARK: DataSource
+    override func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return modules.count
+    }
+    
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return modules[section].itemsCount
     }
@@ -100,4 +104,31 @@ class ModulledCollectionViewController: UICollectionViewController {
     override func collectionView(_ collectionView: UICollectionView, moveItemAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         modules[sourceIndexPath.section].collectionView(collectionView, moveItemAt: sourceIndexPath, to: destinationIndexPath)
     }
+}
+
+extension ModulledCollectionViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return modules[indexPath.section].collectionView(collectionView, layout: collectionViewLayout, sizeForItemAt: indexPath)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsetsMake(0, 0, 0, 0)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return modules[section].collectionView(collectionView, layout: collectionViewLayout, minimumLineSpacingForSectionAt: section)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return modules[section].collectionView(collectionView, layout: collectionViewLayout, minimumInteritemSpacingForSectionAt: section)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        return modules[section].collectionView(collectionView, layout: collectionViewLayout, referenceSizeForHeaderInSection: section)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+        return modules[section].collectionView(collectionView, layout: collectionViewLayout, referenceSizeForFooterInSection: section)
+    }
+
 }
