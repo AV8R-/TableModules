@@ -44,6 +44,9 @@ typealias CollectionModule = CollectionModuleInterface & CollectionModuleImpleme
 protocol CollectionModuleInterface: class {
     var itemsCount: Int { get }
     var reusableCell: ReusableView { set get }
+    var viewModel: TableViewModel! { set get }
+    
+    func prepare(for collection: UICollectionView)
     
     //MARK: Delegate
     func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool
@@ -66,10 +69,18 @@ protocol CollectionModuleInterface: class {
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView
     func collectionView(_ collectionView: UICollectionView, canMoveItemAt indexPath: IndexPath) -> Bool
     func collectionView(_ collectionView: UICollectionView, moveItemAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath)
+    
+    //MARK: Layout Delegate
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize
 }
 
 protocol CollectionModuleImplementation: class {
     var reusableCell: ReusableView { set get }
+    var viewModel: TableViewModel! { set get }
 }
 
 extension CollectionModuleImplementation where Self: CollectionModuleInterface {
@@ -86,6 +97,10 @@ extension CollectionModuleImplementation where Self: CollectionModuleInterface {
 }
 
 extension CollectionModuleImplementation {
+    var itemsCount: Int {
+        return viewModel.numberOfRows(inSection: 0)
+    }
+    
     //MARK: Delegate
     func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool { return true }
     func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {}
@@ -109,6 +124,31 @@ extension CollectionModuleImplementation {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reusableCell.identifier, for: indexPath)
+        if let viewModelled = cell as? ViewModelled {
+            viewModelled.reloadDataForDataModel(viewModel.rowViewModel(atIndexPath: indexPath))
+        }
         return cell
     }
+    
+    //MARK: LayoutDelegate
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize()
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 0
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return 0
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        return CGSize()
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+        return CGSize()
+    }
+
 }
